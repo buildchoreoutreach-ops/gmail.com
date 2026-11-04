@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8fc">
+  <meta name="description" content="Gmail inbox">
+  <title>Gmail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-light density-default app-loading">
+  <div class="startup-loader" id="startup-loader" role="status" aria-live="polite" aria-label="Loading Gmail">
+    <div class="startup-loader-center">
+      <img class="startup-gmail-logo" src="https://ssl.gstatic.com/ui/v1/icons/mail/logo_loading_2x.png" alt="Gmail" onerror="this.onerror=null;this.style.display='none'">
+      <div class="startup-progress-track"><span></span></div>
+      <div class="startup-loader-caption">Loading your mailbox</div>
+    </div>
+  </div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-area">
+        <button class="icon-button hamburger" id="hamburger-btn" data-action="toggle-sidebar" aria-label="Main menu" title="Main menu"><span class="mi">menu</span></button>
+        <button class="brand" id="brand-home" data-action="go-inbox" title="Gmail">
+          <img class="brand-logo" src="https://ssl.gstatic.com/ui/v1/icons/mail/logo_loading_2x.png" alt="Gmail" width="40" height="32">
+          <span class="brand-word">Gmail</span>
+        </button>
+      </div>
+
+      <form class="search-wrap" id="search-form" role="search">
+        <span class="mi search-icon">search</span>
+        <input id="search-input" type="search" placeholder="Search mail" autocomplete="off" aria-label="Search mail">
+        <button class="icon-button search-advanced" type="button" data-action="open-advanced-search" title="Show search options" aria-label="Show search options"><span class="mi">tune</span></button>
+      </form>
+
+      <div class="top-actions">
+        <button class="icon-button" id="open-settings-btn" data-action="toggle-quick-settings" title="Settings" aria-label="Settings"><span class="mi">settings</span></button>
+        <button class="icon-button apps-trigger" id="open-apps-btn" data-action="toggle-apps" title="Google apps" aria-label="Google apps"><span class="mi">apps</span></button>
+        <button class="avatar-button" id="open-profile-btn" data-action="toggle-profile" aria-label="Open profile" title="Account"><span id="header-avatar">B</span></button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <div class="mobile-scrim" id="mobile-scrim" data-action="close-mobile-sidebar"></div>
+      <aside class="left-sidebar" id="sidebar" aria-label="Mail folders">
+        <div class="sidebar-scroll">
+          <button class="compose-button" data-action="open-compose"><span class="mi">edit</span><span class="sidebar-label">Compose</span></button>
+          <nav class="primary-nav" id="primary-nav">
+            <button class="nav-item active" data-folder="inbox"><span class="mi">inbox</span><span class="sidebar-label">Inbox</span><span class="nav-count" id="inbox-count"></span></button>
+            <button class="nav-item" data-folder="starred"><span class="mi">star</span><span class="sidebar-label">Starred</span></button>
+            <button class="nav-item" data-folder="snoozed"><span class="mi">schedule</span><span class="sidebar-label">Snoozed</span></button>
+            <button class="nav-item" data-folder="sent"><span class="mi">send</span><span class="sidebar-label">Sent</span></button>
+            <button class="nav-item" data-folder="drafts"><span class="mi">description</span><span class="sidebar-label">Drafts</span><span class="nav-count" id="draft-count"></span></button>
+            <button class="nav-item" data-folder="purchases"><span class="mi">shopping_bag</span><span class="sidebar-label">Purchases</span></button>
+            <button class="nav-item" data-folder="scheduled"><span class="mi">schedule_send</span><span class="sidebar-label">Scheduled</span></button>
+            <button class="nav-item" data-folder="important"><span class="mi">label_important</span><span class="sidebar-label">Important</span></button>
+            <button class="nav-item" data-folder="all"><span class="mi">mail</span><span class="sidebar-label">All Mail</span></button>
+            <button class="nav-item" data-folder="spam"><span class="mi">report</span><span class="sidebar-label">Spam</span><span class="nav-count" id="spam-count"></span></button>
+            <button class="nav-item" data-folder="trash"><span class="mi">delete</span><span class="sidebar-label">Trash</span></button>
+            <button class="nav-item" data-folder="archive"><span class="mi">archive</span><span class="sidebar-label">Archived</span></button>
+          </nav>
+
+          <section class="labels-section">
+            <div class="labels-heading">
+              <span class="sidebar-label">Labels</span>
+              <button class="mini-icon" data-action="add-label" title="Create new label" aria-label="Create new label"><span class="mi">add</span></button>
+            </div>
+            <div id="labels-container" class="custom-labels"></div>
+          </section>
+
+          <section class="storage-note sidebar-label">
+            <div><span id="storage-used">Saved automatically</span></div>
+            <div class="storage-track"><span></span></div>
+          </section>
+        </div>
+        <button class="collapse-sidebar" data-action="toggle-sidebar" title="Collapse sidebar"><span class="mi">chevron_left</span><span class="sidebar-label">Collapse menu</span></button>
+      </aside>
+
+      <main class="mail-panel" id="mail-panel">
+        <div class="toolbar">
+          <div class="toolbar-left" id="toolbar-default">
+            <label class="checkbox-wrap" title="Select all on this page"><input id="select-all-checkbox" type="checkbox"><span class="fake-check"></span></label>
+            <button class="toolbar-icon" data-action="refresh" title="Refresh"><span class="mi">refresh</span></button>
+            <div class="menu-anchor">
+              <button class="toolbar-icon" data-action="toggle-more-menu" title="More"><span class="mi">more_vert</span></button>
+            </div>
+          </div>
+          <div class="toolbar-left selection-toolbar hidden" id="toolbar-selection">
+            <span class="selection-count" id="selection-count">0 selected</span>
+            <button class="toolbar-icon" data-action="batch-archive" title="Archive"><span class="mi">archive</span></button>
+            <button class="toolbar-icon hidden" data-action="batch-move-inbox" title="Move to Inbox"><span class="mi">move_to_inbox</span></button>
+            <button class="toolbar-icon" data-action="batch-report-spam" title="Report spam"><span class="mi">report</span></button>
+            <button class="toolbar-icon" data-action="batch-delete" title="Delete"><span class="mi">delete</span></button>
+            <button class="toolbar-icon" data-action="batch-mark-unread" title="Mark unread"><span class="mi">mark_email_unread</span></button>
+            <button class="toolbar-icon" data-action="batch-snooze" title="Snooze"><span class="mi">schedule</span></button>
+            <button class="toolbar-icon" data-action="batch-label" title="Label as"><span class="mi">label</span></button>
+            <button class="toolbar-icon" data-action="batch-more" title="More actions"><span class="mi">more_vert</span></button>
+          </div>
+          <div class="toolbar-right">
+            <span id="email-range-text">0 of 0</span>
+            <select id="page-size" class="page-size-select" aria-label="Messages per page"><option value="10">10</option><option value="25">25</option><option value="50">50</option></select>
+            <button class="toolbar-icon pager-button" data-action="page-prev" title="Newer"><span class="mi">chevron_left</span></button>
+            <button class="toolbar-icon pager-button" data-action="page-next" title="Older"><span class="mi">chevron_right</span></button>
+          </div>
+        </div>
+
+        <div class="search-chips hidden" id="search-chips"></div>
+        <div class="category-tabs" id="category-tabs">
+          <button class="category-tab active" data-category="primary"><span class="mi">inbox</span><span>Primary</span></button>
+          <button class="category-tab" data-category="social"><span class="mi">people</span><span>Social</span></button>
+          <button class="category-tab" data-category="promotions"><span class="mi">local_offer</span><span>Promotions</span></button>
+          <button class="category-tab" data-category="updates"><span class="mi">info</span><span>Updates</span></button>
+          <button class="category-tab" data-category="forums"><span class="mi">forum</span><span>Forums</span></button>
+        </div>
+
+        <section class="mail-list" id="email-list" aria-label="Messages" tabindex="-1"></section>
+        <section class="email-detail hidden" id="email-detail" aria-label="Message detail"></section>
+        <section class="settings-page hidden" id="settings-page" aria-label="All settings"></section>
+      </main>
+
+      <aside class="right-rail" aria-label="Google apps">
+        <a class="rail-button calendar" href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer" title="Google Calendar" aria-label="Google Calendar"><span class="rail-calendar-logo"><span class="google-product-art" data-google-app-icon="calendar"></span></span></a>
+        <a class="rail-button" href="https://keep.google.com/" target="_blank" rel="noopener noreferrer" title="Google Keep" aria-label="Google Keep"><span class="google-product-art" data-google-app-icon="keep"></span></a>
+        <a class="rail-button" href="https://tasks.google.com/" target="_blank" rel="noopener noreferrer" title="Google Tasks" aria-label="Google Tasks"><span class="google-product-art" data-google-app-icon="tasks"></span></a>
+        <a class="rail-button" href="https://contacts.google.com/" target="_blank" rel="noopener noreferrer" title="Google Contacts" aria-label="Google Contacts"><span class="google-product-art" data-google-app-icon="contacts"></span></a>
+        <div class="rail-divider"></div>
+        <a class="rail-button" href="https://workspace.google.com/marketplace/" target="_blank" rel="noopener noreferrer" title="Google Workspace Marketplace" aria-label="Google Workspace Marketplace"><span class="mi">add</span></a>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Quick settings drawer -->
+  <aside class="quick-settings hidden" id="settings-panel" aria-label="Quick settings">
+    <div class="drawer-head"><h2>Quick settings</h2><button class="icon-button" data-action="close-quick-settings" aria-label="Close settings"><span class="mi">close</span></button></div>
+    <button class="all-settings-button" data-action="open-all-settings">See all settings</button>
+    <div class="setting-block"><h3>Density</h3>
+      <label class="choice-row"><input type="radio" name="density" value="default"><span>Default</span><span class="density-preview default-preview"></span></label>
+      <label class="choice-row"><input type="radio" name="density" value="comfortable"><span>Comfortable</span><span class="density-preview comfortable-preview"></span></label>
+      <label class="choice-row"><input type="radio" name="density" value="compact"><span>Compact</span><span class="density-preview compact-preview"></span></label>
+    </div>
+    <div class="setting-block"><div class="setting-title-row"><h3>Theme</h3><button class="text-button" data-action="open-all-settings">View all</button></div>
+      <div class="theme-grid">
+        <button class="theme-choice" data-theme="light"><span class="theme-swatch light-swatch"></span>Light</button>
+        <button class="theme-choice" data-theme="dark"><span class="theme-swatch dark-swatch"></span>Dark</button>
+        <button class="theme-choice" data-theme="slate"><span class="theme-swatch slate-swatch"></span>Slate</button>
+        <button class="theme-choice" data-theme="sunset"><span class="theme-swatch sunset-swatch"></span>Sunset</button>
+      </div>
+    </div>
+    <div class="setting-block"><h3>Inbox type</h3><select id="quick-inbox-type" class="form-control"><option value="default">Default</option><option value="important-first">Important first</option><option value="unread-first">Unread first</option><option value="starred-first">Starred first</option></select></div>
+    <div class="setting-block"><h3>Inbox categories</h3>
+      <label class="toggle-row"><span>Social</span><input type="checkbox" data-category-setting="social"></label>
+      <label class="toggle-row"><span>Promotions</span><input type="checkbox" data-category-setting="promotions"></label>
+      <label class="toggle-row"><span>Updates</span><input type="checkbox" data-category-setting="updates"></label>
+      <label class="toggle-row"><span>Forums</span><input type="checkbox" data-category-setting="forums"></label>
+    </div>
+  </aside>
+
+  <!-- Apps menu -->
+  <div class="popup-menu apps-menu hidden" id="apps-menu" role="dialog" aria-label="Google apps">
+    <a href="https://www.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="search"></span></span><span>Search</span></a>
+    <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="maps"></span></span><span>Maps</span></a>
+    <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="youtube"></span></span><span>YouTube</span></a>
+    <a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="drive"></span></span><span>Drive</span></a>
+    <a href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon google-calendar"><span class="google-product-art" data-google-app-icon="calendar"></span></span><span>Calendar</span></a>
+    <a href="https://contacts.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="contacts"></span></span><span>Contacts</span></a>
+    <a href="https://keep.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="keep"></span></span><span>Keep</span></a>
+    <a href="https://tasks.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="tasks"></span></span><span>Tasks</span></a>
+    <a href="https://photos.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="photos"></span></span><span>Photos</span></a>
+    <a href="https://docs.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="docs"></span></span><span>Docs</span></a>
+    <a href="https://sheets.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="sheets"></span></span><span>Sheets</span></a>
+    <a href="https://slides.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="slides"></span></span><span>Slides</span></a>
+    <a href="https://meet.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="meet"></span></span><span>Meet</span></a>
+    <a href="https://forms.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="forms"></span></span><span>Forms</span></a>
+    <a href="https://chat.google.com/" target="_blank" rel="noopener noreferrer"><span class="app-icon"><span class="google-product-art" data-google-app-icon="chat"></span></span><span>Chat</span></a>
+  </div>
+
+  <!-- Profile menu -->
+  <div class="popup-menu profile-menu hidden" id="profile-menu" role="dialog" aria-label="Google Account">
+    <div class="profile-head"><div class="profile-avatar" id="profile-avatar">B</div><strong id="profile-name">Buildchore</strong><span id="profile-email">buildchore.outreach@gmail.com</span></div>
+  </div>
+
+  <!-- More menus -->
+  <div class="popup-menu action-menu hidden" id="more-menu" role="menu">
+    <button data-action="mark-visible-read">Mark all as read</button>
+    <button data-action="empty-trash">Empty Trash</button>
+    <button data-action="open-all-settings">All settings</button>
+  </div>
+  <div class="popup-menu action-menu hidden" id="batch-menu" role="menu">
+    <button data-action="batch-mark-important">Mark as important</button>
+    <button data-action="batch-mark-not-important">Mark as not important</button>
+    <button data-action="batch-delete-forever">Delete forever</button>
+  </div>
+  <div class="popup-menu action-menu hidden" id="label-menu" role="menu"></div>
+
+  <!-- Compose dialog -->
+  <section class="compose-window hidden" id="compose-modal" aria-label="New message">
+    <div class="compose-titlebar"><strong id="compose-title">New Message</strong><div><button class="icon-button small" data-action="toggle-compose-fullscreen" title="Full screen"><span class="mi">fullscreen</span></button><button class="icon-button small" data-action="minimize-compose" title="Minimize"><span class="mi">remove</span></button><button class="icon-button small" data-action="close-compose" title="Close"><span class="mi">close</span></button></div></div>
+    <form id="compose-form" class="compose-form">
+      <div class="compose-fields"><label class="compose-line"><span>To</span><input id="compose-to" autocomplete="off" required></label><div class="compose-extras"><button type="button" data-action="toggle-cc">Cc</button><button type="button" data-action="toggle-bcc">Bcc</button></div>
+        <label class="compose-line hidden" id="cc-line"><span>Cc</span><input id="compose-cc"></label>
+        <label class="compose-line hidden" id="bcc-line"><span>Bcc</span><input id="compose-bcc"></label>
+        <label class="compose-line"><span>Subject</span><input id="compose-subject" required></label>
+      </div>
+      <div class="compose-format-toolbar" role="toolbar" aria-label="Message formatting">
+        <button type="button" data-action="format-command" data-command="bold" title="Bold"><span class="mi">format_bold</span></button>
+        <button type="button" data-action="format-command" data-command="italic" title="Italic"><span class="mi">format_italic</span></button>
+        <button type="button" data-action="format-command" data-command="underline" title="Underline"><span class="mi">format_underlined</span></button>
+        <button type="button" data-action="format-command" data-command="strikeThrough" title="Strikethrough"><span class="mi">strikethrough_s</span></button>
+        <select id="compose-font-size" class="compose-font-size" title="Text size" aria-label="Text size"><option value="2">Small</option><option value="3" selected>Normal</option><option value="4">Large</option><option value="5">Extra large</option><option value="6">Huge</option></select>
+        <button type="button" data-action="format-command" data-command="insertUnorderedList" title="Bulleted list"><span class="mi">format_list_bulleted</span></button>
+        <button type="button" data-action="format-command" data-command="insertOrderedList" title="Numbered list"><span class="mi">format_list_numbered</span></button>
+        <button type="button" data-action="format-command" data-command="justifyLeft" title="Align left"><span class="mi">format_align_left</span></button>
+        <button type="button" data-action="format-command" data-command="justifyCenter" title="Align center"><span class="mi">format_align_center</span></button>
+        <button type="button" data-action="format-command" data-command="justifyRight" title="Align right"><span class="mi">format_align_right</span></button>
+        <button type="button" data-action="format-command" data-command="createLink" title="Insert link"><span class="mi">link</span></button>
+        <button type="button" data-action="format-command" data-command="removeFormat" title="Remove formatting"><span class="mi">format_clear</span></button>
+        <label class="compose-colour-control" title="Text colour"><span class="mi">palette</span><input id="compose-text-colour" type="color" value="#202124" aria-label="Text colour"></label>
+        
+      </div>
+      <div id="compose-body" class="compose-body" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Write your message…"></div>
+      <div id="compose-quoted-original" class="compose-quoted-original hidden" aria-label="Original message"></div>
+      <div class="compose-attachments" id="compose-attachments"></div>
+      <div class="compose-footer"><div class="compose-primary-actions"><button class="send-button" id="compose-send-button" type="submit">Send</button><button class="icon-button" type="button" data-action="toggle-schedule" title="Schedule send"><span class="mi">schedule_send</span></button><label class="icon-button attach-button" title="Attach files"><span class="mi">attach_file</span><input id="compose-files" type="file" multiple hidden></label><button class="icon-button attach-package-button" type="button" data-action="attach-due-diligence" title="Attach Technical & Commercial Due Diligence PDF"><span class="mi">picture_as_pdf</span></button></div><span class="compose-status" id="compose-status">Draft saved</span><button class="icon-button" type="button" data-action="discard-draft" title="Discard draft"><span class="mi">delete</span></button></div>
+      <div class="schedule-row hidden" id="schedule-row"><label>Send date and time <input type="datetime-local" id="schedule-at"></label><button type="button" class="text-button" data-action="clear-schedule">Clear</button></div>
+    </form>
+  </section>
+
+  <!-- Attachment preview -->
+  <section class="modal-backdrop hidden" id="attachment-preview-modal" role="dialog" aria-modal="true" aria-labelledby="attachment-preview-title">
+    <div class="modal-card attachment-preview-card">
+      <div class="modal-heading attachment-preview-heading">
+        <div><p class="eyebrow">ATTACHMENT</p><h2 id="attachment-preview-title">Attachment preview</h2></div>
+        <div class="attachment-preview-controls"><a class="secondary-button" id="attachment-preview-download" href="#" download>Download</a><button class="icon-button" data-action="close-attachment-preview" aria-label="Close preview"><span class="mi">close</span></button></div>
+      </div>
+      <div id="attachment-preview-content" class="attachment-preview-content"></div>
+    </div>
+  </section>
+
+  <!-- Hidden administrator console: opened by 20 clicks on the Gmail logo -->
+  <section class="modal-backdrop hidden" id="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+    <div class="modal-card wide-modal admin-card">
+      <div class="modal-heading"><div><p class="eyebrow">ADMINISTRATION</p><h2 id="admin-title">Administrator console</h2></div><button class="icon-button" data-action="close-admin" aria-label="Close"><span class="mi">close</span></button></div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-action="admin-tab" data-tab="editor">Message editor</button>
+        <button class="admin-tab" data-action="admin-tab" data-tab="bulk">Bulk create</button>
+        <button class="admin-tab" data-action="admin-tab" data-tab="manage">Manage messages</button>
+        <button class="admin-tab" data-action="admin-tab" data-tab="data">Data tools</button>
+      </div>
+
+      <section class="admin-pane" id="admin-pane-editor">
+        <form id="admin-message-form" class="modal-form grid-form">
+          <input id="admin-message-id" type="hidden">
+          <label>Save in<select id="admin-folder" class="form-control"><option value="inbox">Inbox</option><option value="sent">Sent</option><option value="drafts">Drafts</option><option value="purchases">Purchases</option><option value="scheduled">Scheduled</option><option value="archive">Archived</option><option value="spam">Spam</option><option value="trash">Trash</option></select></label>
+          <label>Category<select id="admin-category" class="form-control"><option value="primary">Primary</option><option value="social">Social</option><option value="promotions">Promotions</option><option value="updates">Updates</option><option value="forums">Forums</option></select></label>
+          <label>Sender name<input id="admin-sender" class="form-control" required></label>
+          <label>Sender address<input id="admin-sender-email" type="email" class="form-control" required></label>
+          <label class="span-two">To<input id="admin-recipient" class="form-control" required></label>
+          <label>Cc<input id="admin-cc" class="form-control"></label>
+          <label>Bcc<input id="admin-bcc" class="form-control"></label>
+          <label class="span-two">Subject<input id="admin-subject" class="form-control" required></label>
+          <label class="span-two">Date and time<input id="admin-date" type="datetime-local" class="form-control" required></label>
+          <label class="span-two">Message<textarea id="admin-body" class="form-control" rows="6" required></textarea></label>
+          <label class="span-two">Labels <input id="admin-labels" class="form-control" placeholder="Personal, Work"></label>
+          <label class="span-two">Attachment names <input id="admin-attachments" class="form-control" placeholder="report.pdf, image.png"></label>
+          <label class="check-label"><input type="checkbox" id="admin-unread"> Mark as unread</label>
+          <label class="check-label"><input type="checkbox" id="admin-starred"> Starred</label>
+          <label class="check-label"><input type="checkbox" id="admin-important"> Important</label>
+          <div class="modal-actions span-two"><button type="button" class="secondary-button" data-action="admin-reset-form">Clear fields</button><button type="submit" class="primary-button" id="admin-save-button">Create message</button></div>
+        </form>
+      </section>
+
+      <section class="admin-pane hidden" id="admin-pane-bulk">
+        <form id="admin-bulk-form" class="modal-form grid-form">
+          <label>Number of messages<input id="bulk-count" class="form-control" type="number" min="1" max="1000" value="25" required></label>
+          <label>Interval in minutes<input id="bulk-interval" class="form-control" type="number" min="0" max="525600" value="5" required></label>
+          <label>Sender name template<input id="bulk-sender" class="form-control" value="Newsletter {n}" required></label>
+          <label>Sender address<input id="bulk-sender-email" class="form-control" type="email" value="updates@example.com" required></label>
+          <label class="span-two">Recipient<input id="bulk-recipient" class="form-control" required></label>
+          <label class="span-two">Subject template<input id="bulk-subject" class="form-control" value="Update #{n}" required></label>
+          <label class="span-two">Message template<textarea id="bulk-body" class="form-control" rows="4">This is message number {n}.</textarea></label>
+          <label>Starting date and time<input id="bulk-start" type="datetime-local" class="form-control" required></label>
+          <label>Save in<select id="bulk-folder" class="form-control"><option value="inbox">Inbox</option><option value="sent">Sent</option><option value="purchases">Purchases</option><option value="archive">Archived</option><option value="spam">Spam</option><option value="trash">Trash</option></select></label>
+          <label>Category<select id="bulk-category" class="form-control"><option value="primary">Primary</option><option value="social">Social</option><option value="promotions">Promotions</option><option value="updates">Updates</option><option value="forums">Forums</option></select></label>
+          <label>Labels<input id="bulk-labels" class="form-control" placeholder="Personal, Work"></label>
+          <label class="check-label"><input type="checkbox" id="bulk-unread" checked> Mark as unread</label>
+          <label class="check-label"><input type="checkbox" id="bulk-starred"> Star all messages</label>
+          <label class="check-label"><input type="checkbox" id="bulk-important"> Mark important</label>
+          <div class="modal-actions span-two"><button type="submit" class="primary-button">Generate messages</button></div>
+        </form>
+        <p class="admin-note">Use {n} in the sender, subject or message fields to insert the message number. Up to 1,000 messages can be generated per batch.</p>
+      </section>
+
+      <section class="admin-pane hidden" id="admin-pane-manage">
+        <div class="admin-manage-head"><h3>All messages</h3><input id="admin-filter" class="form-control" type="search" placeholder="Filter by sender, address or subject"></div>
+        <div id="admin-message-list" class="admin-message-list"></div>
+      </section>
+
+      <section class="admin-pane hidden" id="admin-pane-data">
+        <h3>Mailbox data</h3><p class="admin-note">Export a backup, restore a backup, or clear the current mailbox.</p>
+        <div class="admin-data-actions">
+          <button class="secondary-button" data-action="export-data"><span class="mi">download</span> Export all data</button>
+          <button class="secondary-button" data-action="import-data"><span class="mi">upload</span> Import backup</button>
+          <button class="secondary-button danger-button" data-action="admin-clear-all"><span class="mi">delete_forever</span> Delete all messages</button>
+          <input type="file" id="import-file" accept="application/json" hidden>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Advanced search -->
+  <section class="modal-backdrop hidden" id="advanced-search-modal" role="dialog" aria-modal="true" aria-labelledby="advanced-title">
+    <div class="modal-card advanced-card"><div class="modal-heading"><h2 id="advanced-title">Search options</h2><button class="icon-button" data-action="close-advanced-search"><span class="mi">close</span></button></div>
+      <form id="advanced-search-form" class="modal-form">
+        <label>From<input id="adv-from" class="form-control"></label><label>To<input id="adv-to" class="form-control"></label><label>Subject<input id="adv-subject" class="form-control"></label><label>Has the words<input id="adv-words" class="form-control"></label><label>Doesn't have<input id="adv-exclude" class="form-control"></label>
+        <label>Has attachment<select id="adv-attachment" class="form-control"><option value="">Doesn't matter</option><option value="yes">Has attachment</option><option value="no">No attachment</option></select></label>
+        <label>Search in<select id="adv-in" class="form-control"><option value="anywhere">All mail</option><option value="inbox">Inbox</option><option value="sent">Sent</option><option value="trash">Trash</option><option value="spam">Spam</option><option value="archive">Archived</option></select></label>
+        <div class="modal-actions"><button type="button" class="secondary-button" data-action="close-advanced-search">Cancel</button><button type="submit" class="primary-button">Search</button></div>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- Right app panel -->
+  <aside class="side-app-panel hidden" id="side-app-panel" aria-label="Side app panel"><div class="drawer-head"><h2 id="side-app-title">Calendar</h2><button class="icon-button" data-action="close-side-app"><span class="mi">close</span></button></div><div id="side-app-content" class="side-app-content"></div></aside>
+
+  <!-- Hidden import input is in settings panel. -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input id="backup-import-fallback" type="file" accept="application/json" hidden>
+  <script src="app.js" defer></script>
+  <script>
+    // Safety net: keep a broken/slow initializer from leaving the splash screen forever.
+    window.setTimeout(function () {
+      var loader = document.getElementById('startup-loader');
+      if (loader) { loader.classList.add('startup-loader-hidden'); document.body.classList.remove('app-loading'); }
+    }, 12000);
+  </script>
+</body>
+</html>
